@@ -56,4 +56,17 @@ public class LinkTest {
         Link link = Link.shorten(new Url("https://mock.com"), new Url("https://mock.com"));
         Assertions.assertTrue(link.getShortUrl().toString().startsWith("https://mock.com/"));
     }
+
+    @Test
+    public void testIncrementAccessCount() {
+        Link link = Link.shorten(new Url("https://mock.com"), new Url("https://mock.com"));
+        link.incrementAccessCount();
+        Assertions.assertEquals(1, link.getAccessCount());
+    }
+
+    @Test
+    public void testLinkWithZeroAccessCount() {
+        Link link = Link.shorten(new Url("https://mock.com"), new Url("https://mock.com"));
+        Assertions.assertEquals(0, link.getAccessCount());
+    }
 }
