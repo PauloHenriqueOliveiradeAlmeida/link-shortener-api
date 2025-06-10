@@ -9,6 +9,7 @@ public class Link {
     public final Url originalUrl;
     private final String shortHash;
     private final Url baseUrl;
+    private int accessCount = 0;
     private final Integer duration;
     private final Date createdDate;
 
@@ -62,5 +63,13 @@ public class Link {
         if (duration == null) return false;
         Date expirationDate = new Date(createdDate.getTime() + duration);
         return expirationDate.before(new Date());
+    }
+
+    public void incrementAccessCount() {
+        accessCount++;
+    }
+
+    public int getAccessCount() {
+        return accessCount;
     }
 }
