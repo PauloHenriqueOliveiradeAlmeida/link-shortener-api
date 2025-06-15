@@ -34,9 +34,8 @@ public class Guid {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Guid || obj instanceof String || obj instanceof UUID) {
-            return this.toString().equals(obj.toString());
-        }
+        if (obj instanceof Guid) return this.toString().equals(obj.toString());
+
         return false;
     }
 }
