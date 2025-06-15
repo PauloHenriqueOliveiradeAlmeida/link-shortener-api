@@ -1,17 +1,19 @@
 package com.shortener.link.domain.entities;
-
+import com.shortener.link.domain.value_objects.Ip;
 import com.shortener.link.domain.value_objects.Url;
 
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.HashSet;
 
 public class Link {
     public final Url originalUrl;
     private final String shortHash;
     private final Url baseUrl;
-    private int accessCount = 0;
     private final Integer duration;
     private final Date createdDate;
+    private final HashSet<Ip> ipsCanAccess = new HashSet<>();
+    private final HashSet<Ip> ipsThatAccessed = new HashSet<>();
 
     private static final int MINUTE_IN_MILLISECONDS = 60 * 1000;
     private static final int THREE_DAYS_IN_MILLISECONDS = 3 * 24 * 60 * 60 * 1000;
@@ -27,8 +29,9 @@ public class Link {
             return;
         }
 
-        if (duration <  MINUTE_IN_MILLISECONDS || duration > THREE_DAYS_IN_MILLISECONDS)
+        if (duration < MINUTE_IN_MILLISECONDS || duration > THREE_DAYS_IN_MILLISECONDS)
             throw new IllegalArgumentException("A duração deve estar entre 1 minuto e 3 dias");
+
         this.duration = duration;
     }
 
@@ -65,11 +68,29 @@ public class Link {
         return expirationDate.before(new Date());
     }
 
-    public void incrementAccessCount() {
-        accessCount++;
+    public void addNewAccessed(Ip ip) {
+        if (!isPublic() && !ipCanAccess(ip)) throw new IllegalArgumentException("IP não pode acessar esse link");
+        ipsThatAccessed.add(ip);
+    }
+
+    public HashSet<Ip> getIpsThatAccessed() {
+        return new HashSet<>(ipsThatAccessed);
     }
 
     public int getAccessCount() {
-        return accessCount;
+        return ipsThatAccessed.size();
+    }
+
+    public void addNewCanAccess(Ip ip) {
+        ipsCanAccess.add(ip);
+    }
+
+    public boolean ipCanAccess(Ip ip) {
+        if (isPublic()) return true;
+        return ipsCanAccess.stream().anyMatch(ip::equals);
+    }
+
+    public boolean isPublic() {
+        return ipsCanAccess.isEmpty();
     }
 }
