@@ -2,6 +2,7 @@ package com.shortener.link.domain.entities;
 
 
 import com.shortener.link.domain.enums.Uf;
+import com.shortener.link.domain.value_objects.Guid;
 import com.shortener.link.domain.value_objects.Ip;
 import com.shortener.link.domain.value_objects.Location;
 import com.shortener.link.domain.value_objects.Url;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class LinkTest {
     @Test
     public void testCreateLinkCorrectly() {
-        Link link = new Link(new Url("https://mock.com"), new Url("https://mock.com"), "short", new Date());
+        Link link = new Link(Guid.create(), new Url("https://mock.com"), new Url("https://mock.com"), "short", new Date());
         Assertions.assertEquals(new Url("https://mock.com"), link.originalUrl);
         Assertions.assertEquals(new Url("https://mock.com/short"), link.getShortUrl());
     }
@@ -43,7 +44,7 @@ public class LinkTest {
     @Test
     public void testIsExpired() {
         int duration = 3 * 24 * 60 * 60 * 1000;
-        Link link = new Link(new Url("https://mock.com"), new Url("https://mock.com"), "short", new Date(new Date().getTime() - duration - 1), duration);
+        Link link = new Link(Guid.create(), new Url("https://mock.com"), new Url("https://mock.com"), "short", new Date(new Date().getTime() - duration - 1), duration);
         Assertions.assertTrue(link.isExpired());
     }
 
