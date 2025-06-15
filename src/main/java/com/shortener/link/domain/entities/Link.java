@@ -1,4 +1,5 @@
 package com.shortener.link.domain.entities;
+import com.shortener.link.domain.value_objects.Guid;
 import com.shortener.link.domain.value_objects.Ip;
 import com.shortener.link.domain.value_objects.Url;
 
@@ -7,18 +8,20 @@ import java.util.Date;
 import java.util.HashSet;
 
 public class Link {
+    public final Guid id;
     public final Url originalUrl;
-    private final String shortHash;
+    public final String shortHash;
     private final Url baseUrl;
-    private final Integer duration;
-    private final Date createdDate;
+    public final Integer duration;
+    public final Date createdDate;
     private final HashSet<Ip> ipsCanAccess = new HashSet<>();
     private final HashSet<Ip> ipsThatAccessed = new HashSet<>();
 
     private static final int MINUTE_IN_MILLISECONDS = 60 * 1000;
     private static final int THREE_DAYS_IN_MILLISECONDS = 3 * 24 * 60 * 60 * 1000;
 
-    public Link(Url originalUrl, Url baseUrl, String shortHash, Date createdDate, Integer duration) {
+    public Link(Guid id, Url originalUrl, Url baseUrl, String shortHash, Date createdDate, Integer duration) {
+        this.id = id;
         this.originalUrl = originalUrl;
         this.baseUrl = baseUrl;
         this.shortHash = shortHash;
@@ -35,8 +38,8 @@ public class Link {
         this.duration = duration;
     }
 
-    public Link(Url originalUrl, Url baseUrl, String shortHash, Date createdDate) {
-        this(originalUrl, baseUrl, shortHash, createdDate, null);
+    public Link(Guid id, Url originalUrl, Url baseUrl, String shortHash, Date createdDate) {
+        this(id, originalUrl, baseUrl, shortHash, createdDate, null);
     }
 
     public static Link shorten(Url originalUrl, Url baseUrl, Integer duration) {
@@ -48,7 +51,7 @@ public class Link {
             for (byte urlByte : urlBytes) hexString.append(String.format("%02x", urlByte));
 
             String hash = hexString.substring(0, 8);
-            return new Link(originalUrl, baseUrl, hash, new Date(), duration);
+            return new Link(Guid.create(), originalUrl, baseUrl, hash, new Date(), duration);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
