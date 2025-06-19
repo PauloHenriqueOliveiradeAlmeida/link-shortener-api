@@ -27,6 +27,10 @@ public class Guid {
         return new Guid(UUID.randomUUID());
     }
 
+    public UUID getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return value.toString();
