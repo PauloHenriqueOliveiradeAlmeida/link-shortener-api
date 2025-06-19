@@ -9,13 +9,14 @@ import com.shortener.link.domain.value_objects.Url;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Date;
+
+import java.time.Instant;
 
 @SpringBootTest
 public class LinkTest {
     @Test
     public void testCreateLinkCorrectly() {
-        Link link = new Link(Guid.create(), new Url("https://mock.com"), new Url("https://mock.com"), "short", new Date());
+        Link link = new Link(Guid.create(), new Url("https://mock.com"), new Url("https://mock.com"), "short", Instant.now());
         Assertions.assertEquals(new Url("https://mock.com"), link.originalUrl);
         Assertions.assertEquals(new Url("https://mock.com/short"), link.getShortUrl());
     }
@@ -44,7 +45,7 @@ public class LinkTest {
     @Test
     public void testIsExpired() {
         int duration = 3 * 24 * 60 * 60 * 1000;
-        Link link = new Link(Guid.create(), new Url("https://mock.com"), new Url("https://mock.com"), "short", new Date(new Date().getTime() - duration - 1), duration);
+        Link link = new Link(Guid.create(), new Url("https://mock.com"), new Url("https://mock.com"), "short", Instant.ofEpochMilli(Instant.now().toEpochMilli() - duration - 1), duration);
         Assertions.assertTrue(link.isExpired());
     }
 

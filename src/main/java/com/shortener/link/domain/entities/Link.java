@@ -4,7 +4,7 @@ import com.shortener.link.domain.value_objects.Ip;
 import com.shortener.link.domain.value_objects.Url;
 
 import java.security.MessageDigest;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashSet;
 
 public class Link {
@@ -13,14 +13,14 @@ public class Link {
     public final String shortHash;
     private final Url baseUrl;
     public final Integer duration;
-    public final Date createdDate;
+    public final Instant createdDate;
     private final HashSet<Ip> ipsCanAccess = new HashSet<>();
     private final HashSet<Ip> ipsThatAccessed = new HashSet<>();
 
     private static final int MINUTE_IN_MILLISECONDS = 60 * 1000;
     private static final int THREE_DAYS_IN_MILLISECONDS = 3 * 24 * 60 * 60 * 1000;
 
-    public Link(Guid id, Url originalUrl, Url baseUrl, String shortHash, Date createdDate, Integer duration) {
+    public Link(Guid id, Url originalUrl, Url baseUrl, String shortHash, Instant createdDate, Integer duration) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.baseUrl = baseUrl;
@@ -38,7 +38,7 @@ public class Link {
         this.duration = duration;
     }
 
-    public Link(Guid id, Url originalUrl, Url baseUrl, String shortHash, Date createdDate) {
+    public Link(Guid id, Url originalUrl, Url baseUrl, String shortHash, Instant createdDate) {
         this(id, originalUrl, baseUrl, shortHash, createdDate, null);
     }
 
@@ -51,7 +51,7 @@ public class Link {
             for (byte urlByte : urlBytes) hexString.append(String.format("%02x", urlByte));
 
             String hash = hexString.substring(0, 8);
-            return new Link(Guid.create(), originalUrl, baseUrl, hash, new Date(), duration);
+            return new Link(Guid.create(), originalUrl, baseUrl, hash, Instant.now(), duration);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -67,8 +67,8 @@ public class Link {
 
     public boolean isExpired() {
         if (duration == null) return false;
-        Date expirationDate = new Date(createdDate.getTime() + duration);
-        return expirationDate.before(new Date());
+        Instant expirationDate = Instant.ofEpochMilli(createdDate.toEpochMilli() + duration);
+        return expirationDate.isBefore(Instant.now());
     }
 
     public void addNewAccessed(Ip ip) {
@@ -95,5 +95,14 @@ public class Link {
 
     public boolean isPublic() {
         return ipsCanAccess.isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Link) {
+            return this.id.equals(((Link) obj).id);
+        }
+
+        return false;
     }
 }
