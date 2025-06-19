@@ -9,9 +9,6 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.model.Page;
-import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
-import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.ArrayList;
@@ -55,39 +52,6 @@ abstract class BaseRepository<Entity, PersistenceEntity> implements IBaseReposit
         }
 
         return this.entityMapper.toEntity(entity);
-    }
-
-    @Override
-    public List<Entity> findPaginated(int page, int size) {
-        if (page < 1) throw new IllegalArgumentException("Página deve ser maior que 0");
-
-        boolean hasEvaluatedKeys = !evaluatedKeys.isEmpty();
-        if (hasEvaluatedKeys) {
-            Map<String, AttributeValue> lastEvaluatedKey = evaluatedKeys.get(page - 1);
-           PageIterable<PersistenceEntity> pages = this.dynamoDbTable.scan(
-                   ScanEnhancedRequest.builder()
-                           .exclusiveStartKey(lastEvaluatedKey)
-                           .limit(size).build()
-           );
-           List<PersistenceEntity> items = pages.items().stream().toList();
-           return items.stream().map(this.entityMapper::toEntity).toList();
-        }
-
-        ScanEnhancedRequest.Builder scanExpression = ScanEnhancedRequest.builder().limit(size);
-        PageIterable<PersistenceEntity> pages = this.dynamoDbTable.scan(scanExpression.build());
-        List<PersistenceEntity> items = new ArrayList<>();
-
-        int currentPage = 0;
-        for (Page<PersistenceEntity> pageData : pages) {
-            currentPage++;
-            evaluatedKeys.add(pageData.lastEvaluatedKey());
-
-            if (currentPage == page) {
-                items.addAll(pageData.items());
-            }
-        }
-
-        return items.stream().map(this.entityMapper::toEntity).toList();
     }
 
     @Override

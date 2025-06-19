@@ -7,6 +7,5 @@ public interface IBaseRepository<Entity> {
     Entity save(Entity entity);
     void delete(Entity entity);
     Entity findById(Guid id);
-    List<Entity> findPaginated(int page, int size);
     List<Entity> findAll();
 }
