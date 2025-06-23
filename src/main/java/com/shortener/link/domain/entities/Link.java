@@ -61,6 +61,10 @@ public class Link {
         return shorten(originalUrl, baseUrl, null);
     }
 
+    public String getShortHash() {
+        return shortHash;
+    }
+
     public Url getShortUrl() {
         return new Url(baseUrl.toString() + "/" + shortHash);
     }

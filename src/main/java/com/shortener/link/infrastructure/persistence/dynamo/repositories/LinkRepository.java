@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+
+import java.util.List;
 
 @Repository
 public class LinkRepository extends BaseRepository<Link, LinkEntity> implements ILinkRepository {
@@ -17,25 +18,19 @@ public class LinkRepository extends BaseRepository<Link, LinkEntity> implements 
     }
 
     @Override
-    public Link findByShortUrl(String shortUrl) {
-        LinkEntity entity = this.dynamoDbTable.query(
-                QueryEnhancedRequest.builder()
-                        .queryConditional(
-                                QueryConditional.keyEqualTo(
-                                        Key.builder().partitionValue(shortUrl).build()
-                                )
-                        )
-                        .build()
-        )
-                .items()
+    public Link findByShortHash(String shortHash) {
+        List<LinkEntity> entity = this.dynamoDbTable
+                .index("short-url-hash-index")
+                .query(request -> request.queryConditional(
+                        QueryConditional.keyEqualTo(
+                        Key.builder().partitionValue(shortHash).build()
+                )).limit(1))
                 .stream()
-                .toList()
-                .getFirst();
+                .flatMap(page -> page.items().stream())
+                .toList();
 
-        if (entity == null) {
-            return null;
-        }
+        if (entity.isEmpty()) return null;
 
-        return this.entityMapper.toEntity(entity);
+        return this.entityMapper.toEntity(entity.getFirst());
     }
 }
