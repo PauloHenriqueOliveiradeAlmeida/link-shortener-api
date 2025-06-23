@@ -3,9 +3,7 @@ package com.shortener.link.domain.value_objects;
 import com.shortener.link.domain.enums.Uf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 public class IpTest {
 
     @Test

@@ -8,11 +8,8 @@ import com.shortener.link.domain.value_objects.Location;
 import com.shortener.link.domain.value_objects.Url;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import java.time.Instant;
 
-@SpringBootTest
 public class LinkTest {
     @Test
     public void testCreateLinkCorrectly() {
