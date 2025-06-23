@@ -63,12 +63,17 @@ class LinkRepositoryTest {
     }
 
     @Test
-    void testFindLinkByShortUrl() {
+    void testFindLinkByShortHash() {
         Link link = Link.shorten(new Url("https://mock.com"), new Url("https://mock.com"));
         this.linkRepository.save(link);
-        Link foundLink = this.linkRepository.findByShortUrl(link.getShortUrl().toString());
+        Link foundLink = this.linkRepository.findByShortHash(link.getShortHash());
 
         Assertions.assertEquals(link, foundLink);
+    }
+
+    @Test
+    void testNotFoundLinkByShortHash() {
+        Assertions.assertNull(this.linkRepository.findByShortHash("short"));
     }
 
     @Test
