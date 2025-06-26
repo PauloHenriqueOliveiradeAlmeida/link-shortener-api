@@ -1,0 +1,31 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build and run tests
+        run: |
+          ./gradlew test
+
+      - name: Check if tests exists
+        run: |
+          if [ ! -d "build/test-results/test" ]; then
+             echo "Tests Not found"
+             exit 1
+          fi
+    
