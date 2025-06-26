@@ -80,7 +80,7 @@ public class LinkTest {
     @Test
     public void testAddAccessedInvalidOnPrivateLink() {
         Link link = Link.shorten(new Url("https://mock.com"), new Url("https://mock.com"));
-        link.addNewCanAccess(new Ip("64.97.39.321", new Location("Cidade", Uf.AC)));
+        link.addNewCanAccess(new Ip("142.251.12.138", new Location("Cidade", Uf.AC)));
         Assertions.assertThrows(IllegalArgumentException.class, () -> link.addNewAccessed(new Ip("64.97.39.220", new Location("Cidade", Uf.AC))));
 
     }
