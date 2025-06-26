@@ -4,7 +4,7 @@ import java.net.InetAddress;
 
 public record Ip(String value, Location location) {
     public Ip {
-        if (value.isBlank()) throw new IllegalArgumentException("IP deve ser informado");
+        if (value == null || value.isBlank()) throw new IllegalArgumentException("IP deve ser informado");
         if (location == null) throw new IllegalArgumentException("Localização deve ser informada");
 
         try {
