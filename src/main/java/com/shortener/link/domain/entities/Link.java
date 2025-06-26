@@ -5,6 +5,7 @@ import com.shortener.link.domain.value_objects.Url;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Link {
     public final Url originalUrl;
@@ -12,8 +13,8 @@ public class Link {
     private final Url baseUrl;
     private final Integer duration;
     private final Date createdDate;
-    private final HashSet<Ip> ipsCanAccess = new HashSet<>();
-    private final HashSet<Ip> ipsThatAccessed = new HashSet<>();
+    private final Set<Ip> ipsCanAccess = new HashSet<>();
+    private final Set<Ip> ipsThatAccessed = new HashSet<>();
 
     private static final int MINUTE_IN_MILLISECONDS = 60 * 1000;
     private static final int THREE_DAYS_IN_MILLISECONDS = 3 * 24 * 60 * 60 * 1000;
@@ -73,7 +74,7 @@ public class Link {
         ipsThatAccessed.add(ip);
     }
 
-    public HashSet<Ip> getIpsThatAccessed() {
+    public Set<Ip> getIpsThatAccessed() {
         return new HashSet<>(ipsThatAccessed);
     }
 
